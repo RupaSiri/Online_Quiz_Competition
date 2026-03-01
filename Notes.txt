@@ -1,0 +1,358 @@
+        Project Title		:	Online Quiz Competition
+
+	Backend Technologies	:	Java, Spring Boot, Rest APIs
+
+        Frontend Technologies	:	HTML, CSS, JavaScript
+
+	Database		:	MySQL
+
+	Tools			:	POSTMAN, MAVEN & GIT/GITHUB
+
+
+       Project Structure
+
+  backend 
+|
+|---src/main/java
+|	|
+	|---com.rupasiri.www
+		|
+		|---QuizappApplication.java
+	
+	|---com.ihub.www.repository
+		|
+		|---QuestionRepository.java (interface)
+		| 
+	
+	|---com.ihub.www.entity
+		|
+		|--- Question.java
+
+	|---com.ihub.www.service
+		|
+		|---QuizService.java
+
+	|---com.ihub.www.controller
+		|
+		|---QuizController.java
+	
+|---src/main/resources
+	|
+	|---application.properties 
+|
+|---src/test/java
+|
+|---pom.xml  
+
+
+QuizController.java
+-------------------
+
+package com.rupasiri.www.controller;
+
+import com.rupasiri.www.entity.Question;
+import com.rupasiri.www.service.QuizService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/quiz")
+@CrossOrigin(origins = "*")
+public class QuizController {
+
+    @Autowired
+    private QuizService quizService;
+
+    // insert question
+    @PostMapping("/add")
+    public Question addQuestion(@RequestBody Question question) {
+        return quizService.addQuestion(question);
+    }
+
+    // fetch all questions
+    @GetMapping("/all")
+    public List<Question> getAllQuestions() {
+        return quizService.getAllQuestions();
+    }
+}
+
+Question.java
+-------------
+
+package com.rupasiri.www.entity;
+
+import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+@JsonPropertyOrder({
+    "id",
+    "questionTitle",
+    "option1",
+    "option2",
+    "option3",
+    "option4",
+    "correctAnswer"
+})
+
+@Entity
+@Table(name = "questions")
+public class Question {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    private String questionTitle;
+    private String option1;
+    private String option2;
+    private String option3;
+    private String option4;
+    private String correctAnswer;
+
+    // Getters and Setters
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getQuestionTitle() {
+        return questionTitle;
+    }
+
+    public void setQuestionTitle(String questionTitle) {
+        this.questionTitle = questionTitle;
+    }
+
+    public String getOption1() {
+        return option1;
+    }
+
+    public void setOption1(String option1) {
+        this.option1 = option1;
+    }
+
+    public String getOption2() {
+        return option2;
+    }
+
+    public void setOption2(String option2) {
+        this.option2 = option2;
+    }
+
+    public String getOption3() {
+        return option3;
+    }
+
+    public void setOption3(String option3) {
+        this.option3 = option3;
+    }
+
+    public String getOption4() {
+        return option4;
+    }
+
+    public void setOption4(String option4) {
+        this.option4 = option4;
+    }
+
+    public String getCorrectAnswer() {
+        return correctAnswer;
+    }
+
+    public void setCorrectAnswer(String correctAnswer) {
+        this.correctAnswer = correctAnswer;
+    }
+}
+
+
+QuestionRepository.java
+-----------------------
+
+package com.rupasiri.www.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.rupasiri.www.entity.Question;
+
+@Repository
+public interface QuestionRepository extends JpaRepository<Question, Integer> {
+
+}
+
+
+QuizService.java
+----------------
+
+package com.rupasiri.www.service;
+
+
+import com.rupasiri.www.entity.Question;
+import com.rupasiri.www.repository.QuestionRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class QuizService {
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    // add question
+    public Question addQuestion(Question question) {
+        return questionRepository.save(question);
+    }
+
+    // get all questions
+    public List<Question> getAllQuestions() {
+        return questionRepository.findAll();
+    }
+}
+
+
+application.properties
+----------------------
+
+spring.application.name=quizapp
+spring.datasource.url=jdbc:mysql://localhost:3306/online_quiz_competition
+spring.datasource.username=root
+spring.datasource.password=root
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
+
+server.port=8081
+
+
+added dependencies in pom.xml
+-----------------------------
+
+<dependency>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
+</dependency>
+
+
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+
+
+
+
+Frontend
+|
+|----index.html
+|----script.js
+|
+
+index.html
+----------
+  
+  <!DOCTYPE html>
+<html>
+<head>
+    <title>Online Quiz Competition</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            margin: 40px;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .question-box {
+            background: white;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: blue;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: darkblue;
+        }
+    </style>
+
+</head>
+<body>
+
+<h1>Online Quiz Competition</h1>
+
+<button onclick="loadQuestions()">Load Questions</button>
+
+<div id="questions"></div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
+
+
+script.js
+---------
+
+function loadQuestions() {
+
+    fetch("http://localhost:8081/quiz/all")
+    .then(response => response.json())
+    .then(data => {
+
+        let questionsDiv = document.getElementById("questions");
+
+        questionsDiv.innerHTML = "";
+
+        data.forEach(q => {
+
+            let html = `
+                <div class="question-box">
+                    <h3>${q.questionTitle}</h3>
+                    <p>1. ${q.option1}</p>
+                    <p>2. ${q.option2}</p>
+                    <p>3. ${q.option3}</p>
+                    <p>4. ${q.option4}</p>
+                </div>
+            `;
+
+            questionsDiv.innerHTML += html;
+        });
+
+    })
+    .catch(error => console.error(error));
+}
+
+
+
+
+
+
+
+
+
+
+
+
