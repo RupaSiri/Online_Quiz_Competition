@@ -346,6 +346,29 @@ function loadQuestions() {
 }
 
 
+  Database Setup
+  ----------------
+
+  1. Create a Schema in MySQL database
+    i.e create schema online_quiz_competition;
+
+ 2. Update database configuration in application.properties.
+
+ 3. Run the spring boot application
+    Tables will be created automatically using Hibernate.
+
+ 4. To verify the database and tables used following commands
+
+    SHOW DATABASES : To verify quizdb exists
+
+    SHOW TABLES    : To check tables inside quizdb
+
+    DESCRIBE questions : To verify table structure
+
+    SELECT * FROM questions : To verify inserted data
+
+
+
 
 
 
